@@ -1,28 +1,58 @@
-import Link from "next/link";
-import { Container, Button, Muted } from "@/components/ui";
+import ProductListSection from "@/components/ProductListSection";
+import BannerCarousel from "@/components/home/BannerCarousel";
+import prisma from "@/lib/prisma";
 
-export default function Home() {
+// Home page component
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  // Set the number of products per page
+  const pageSize = 20;
+  // Determine the current page from search params, default to 1
+  const sp = await searchParams;
+  const page = Math.max(1, Number(sp?.page ?? 1) || 1);
+
+  // Fetch products and total count from the database in parallel
+  const [products, total] = await Promise.all([
+    prisma.product.findMany({
+      where: { isActive: true }, // Only active products
+      include: { images: { take: 1 } }, // Include the first image for each product
+      orderBy: { createdAt: "desc" }, // Sort by newest first
+      skip: (page - 1) * pageSize, // Pagination: skip products for previous pages
+      take: pageSize, // Limit to page size
+    }),
+    prisma.product.count({ where: { isActive: true } }), // Count total active products
+  ]);
+
+  // Define banner slides for the homepage carousel
+  const slides = [
+    { src: "/demo/Oaks-vintage.jpg", alt: "oaks urban", href: "/?banner=1" },
+    {
+      src: "/demo/Oaks-urban.jpg",
+      alt: "oaks vintage",
+      href: "/category/jackets",
+    },
+    {
+      src: "/demo/oaks-new-month.jpg",
+      alt: "happy new month",
+      href: "/?banner=3",
+    },
+  ];
+
+  // Fetch banners for the carousel (CMS-managed)
+  const banners = await prisma.banner.findMany({
+    where: { active: true },
+    orderBy: { order: "asc" },
+    take: 3,
+  });
+
+  // Render the BannerCarousel above the ProductListSection
   return (
-    <Container style={{ padding: "28px 16px 40px" }}>
-      <h1
-        style={{
-          fontSize: 46,
-          fontWeight: 800,
-          lineHeight: 1.05,
-          marginBottom: 12,
-        }}
-      >
-        Crafted. Curated. Vintage.
-      </h1>
-      <Muted style={{ maxWidth: 680 }}>
-        Rare jackets, tees, and accessories — sustainably sourced and restored.
-        New drops weekly.
-      </Muted>
-      <div style={{ marginTop: 18 }}>
-        <Button as={Link} href="/products">
-          Shop the collection
-        </Button>
-      </div>
-    </Container>
+    <>
+      <BannerCarousel banners={banners} />
+      <ProductListSection products={products} slides={slides} />
+    </>
   );
 }

@@ -52,10 +52,10 @@ const IconBtn = styled.button`
   border-radius: 10px;
   border: 1px solid ${color.border};
   background: transparent;
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
 `;
 const InlineSearch = styled.form`
   display: grid;
@@ -95,11 +95,9 @@ export default function MobileDrawer({
             <IconClose />
           </IconBtn>
         </Head>
-
         <InlineSearch action="/search">
           <input name="q" placeholder="Search products…" />
         </InlineSearch>
-
         <List onClick={onClose}>
           <Link href="/category/jackets">Jackets</Link>
           <Link href="/category/tees">T-Shirts</Link>

@@ -1,15 +1,17 @@
 import prisma from "@/lib/prisma";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { Container, Button, Card, Divider, Muted } from "@/components/ui";
+import { Container, Card, Divider, Muted } from "@/components/ui";
+import AddToCartButton from "@/components/cart/AddToCartButton";
 
 export default async function ProductPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
+  const resolvedParams = await params;
   const product = await prisma.product.findUnique({
-    where: { slug: params.slug },
+    where: { slug: resolvedParams.slug },
     include: { images: true, category: true },
   });
   if (!product) return notFound();
@@ -48,10 +50,7 @@ export default async function ProductPage({
           <p style={{ color: "rgba(255,255,255,.85)" }}>
             {product.description}
           </p>
-          <form action="/api/cart" method="post" style={{ marginTop: 18 }}>
-            <input type="hidden" name="productId" value={product.id} />
-            <Button type="submit">Add to cart</Button>
-          </form>
+          <AddToCartButton productId={product.id} />
         </div>
       </div>
     </Container>

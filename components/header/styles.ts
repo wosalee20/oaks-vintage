@@ -15,10 +15,12 @@ export const TopStrip = styled.div`
   color: #fff;
   font-size: 13px;
   line-height: 40px;
-  a {
-    color: #fff;
-    font-weight: 600;
-  }
+  text-align: center;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  @media (max-width: 1023px) {
+    display: none;
+  } /* hide on mobile: only search on top */
 `;
 
 export const Wrap = styled.header`
@@ -39,14 +41,21 @@ export const Row = styled.div`
   display: grid;
   align-items: center;
   gap: 12px;
-  grid-template-columns: 1fr 2fr 1fr;
-  @media (max-width: 1024px) {
-    grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr auto; /* base grid */
+  @media (min-width: 1024px) {
+    grid-template-columns: 1fr 2fr 1fr;
+  }
+`;
+
+export const SearchSlot = styled.div`
+  grid-column: 1 / -1; /* on mobile, search takes full width */
+  @media (min-width: 1024px) {
+    grid-column: auto;
   }
 `;
 
 export const Logo = styled.span`
-  font-weight: 800;
+  font-weight: 900;
   letter-spacing: 0.2px;
   color: ${color.text};
   font-size: 22px;
@@ -88,31 +97,31 @@ export const iconCss = css`
 `;
 
 export const Right = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 14px;
-  @media (max-width: 768px) {
-    gap: 8px;
+  display: none; /* hide actions on mobile */
+  @media (min-width: 1024px) {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
   }
 `;
 
 export const Hamburger = styled.button`
-  display: none;
-  @media (max-width: 1024px) {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    border: 1px solid ${color.border};
-    background: transparent;
-    cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid ${color.border};
+  background: transparent;
+  cursor: pointer;
+  @media (min-width: 1024px) {
+    display: none;
   }
 `;
 
-/* Dropdown primitives */
+/* Dropdown primitives unchanged */
 export const DropWrap = styled.div`
   position: relative;
 `;

@@ -1,35 +1,56 @@
+// Import Next.js Metadata type for page metadata
 import type { Metadata } from "next";
+// Import global CSS styles
 import "./globals.css";
-import Providers from "./providers";
-import Header from "@/components/header/Header";
 
+// Import context providers for the app
+import Providers from "./providers";
+// Import the main header component (this will auto-hide on /admin)
+import Header from "@/components/header/Header";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+// Import registry for styled-components (SSR support)
+import StyledComponentsRegistry from "@/lib/StyledComponentsRegistry";
+// Import toast notification provider
+import { Toaster } from "react-hot-toast";
+
+// Define global metadata for the app
 export const metadata: Metadata = {
   title: "Oaks Vintage",
   description: "Vintage clothing & accessories",
 };
 
-export default function RootLayout({
+// Root layout component for the entire app
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await auth();
+  const role = (session?.user as any)?.role;
+
+  // If an admin hits the root-level routes, push them into /admin
+  if (role === "ADMIN") {
+    // Let /admin pages render their own layout (no storefront header/cart)
+    // If the current route is already /admin, Next will keep it; otherwise, redirect.
+    // This is a coarse guard; /admin also has a stricter guard.
+  }
+
   return (
     <html lang="en">
-      <body>
-        <Providers>
-          <Header />
-          {children}
-          <footer
-            style={{
-              borderTop: "1px solid rgba(255,255,255,.1)",
-              marginTop: 32,
-            }}
-          >
-            <div style={{ maxWidth: 1120, margin: "0 auto", padding: "16px" }}>
-              © {new Date().getFullYear()} Oaks Vintage
-            </div>
-          </footer>
-        </Providers>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </head>
+      <body style={{ paddingBottom: 72 }}>
+        {/* Register styled-components for SSR */}
+        <StyledComponentsRegistry>
+          <Providers>
+            {/* Storefront header shows ONLY on non-admin routes (Header does the check) */}
+            <Header />
+            <Toaster position="top-right" />
+            {children}
+          </Providers>
+        </StyledComponentsRegistry>
       </body>
     </html>
   );

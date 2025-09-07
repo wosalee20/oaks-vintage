@@ -1,5 +1,10 @@
 "use client";
 import styled from "styled-components";
+import { IconChevron } from "./header/icons";
+// RightChevron: a right-pointing chevron icon for list items
+export const RightChevron = (props: React.ComponentProps<"svg">) => (
+  <IconChevron {...props} />
+);
 
 export const Container = styled.div`
   width: 100%;
@@ -18,11 +23,12 @@ export const Button = styled.button`
   background: ${({ theme }) => theme.colors.brand};
   color: #fff;
   cursor: pointer;
-  font-weight: 600;
-  transition: 0.2s ease transform, 0.2s ease background;
+  font-weight: 700;
+  transition: 0.2s ease transform, 0.2s ease background, 0.2s ease box-shadow;
   &:hover {
     background: ${({ theme }) => theme.colors.brandDark};
     transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
   }
   &:disabled {
     opacity: 0.5;
@@ -40,7 +46,7 @@ export const Card = styled.div`
 
 export const Grid3 = styled.div`
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 18px;
   @media (min-width: 768px) {
     grid-template-columns: repeat(3, 1fr);

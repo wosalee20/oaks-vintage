@@ -1,5 +1,26 @@
+"use client";
 import { Container } from "@/components/ui";
 import Link from "next/link";
+import styled from "styled-components";
+
+const Shell = styled.div`
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 24px;
+
+  @media (max-width: 1023px) {
+    grid-template-columns: 1fr; /* mobile: single column */
+  }
+`;
+
+const Aside = styled.aside`
+  border-right: 1px solid rgba(0, 0, 0, 0.08);
+  padding-right: 16px;
+
+  @media (max-width: 1023px) {
+    display: none; /* mobile: hide sidebar to match screenshot */
+  }
+`;
 
 export default function AccountLayout({
   children,
@@ -7,16 +28,9 @@ export default function AccountLayout({
   children: React.ReactNode;
 }) {
   return (
-    <Container style={{ padding: "28px 16px 40px" }}>
-      <div
-        style={{ display: "grid", gridTemplateColumns: "220px 1fr", gap: 24 }}
-      >
-        <aside
-          style={{
-            borderRight: "1px solid rgba(255,255,255,.1)",
-            paddingRight: 16,
-          }}
-        >
+    <Container style={{ padding: "12px 16px 96px" }}>
+      <Shell>
+        <Aside>
           <div style={{ fontWeight: 700, marginBottom: 12 }}>My Account</div>
           <nav style={{ display: "grid", gap: 8, fontSize: 14 }}>
             <Link href="/account">Overview</Link>
@@ -24,9 +38,9 @@ export default function AccountLayout({
             <Link href="/account/addresses">Addresses</Link>
             <Link href="/account/profile">Profile</Link>
           </nav>
-        </aside>
+        </Aside>
         <section>{children}</section>
-      </div>
+      </Shell>
     </Container>
   );
 }
