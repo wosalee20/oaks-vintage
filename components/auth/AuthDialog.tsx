@@ -3,7 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
+import { signIn, getProviders } from "next-auth/react";
+const [providers, setProviders] = useState<any>(null);
+
+useEffect(() => {
+  getProviders().then(setProviders);
+}, []);
 
 const Overlay = styled.div<{ open: boolean }>`
   position: fixed;
@@ -407,51 +412,20 @@ export default function AuthDialog({
           </Divider>
 
           <Socials>
-            <button
-              aria-label="Continue with Google"
-              onClick={() => signIn("google", { callbackUrl: "/account" })}
-            >
-              {/* Google */}
-              <svg width="22" height="22" viewBox="0 0 48 48">
-                <path
-                  fill="#FFC107"
-                  d="M43.6 20.5H42V20H24v8h11.3C33.6 32.4 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.7 1.1 7.7 3l5.7-5.7C34.6 6 29.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c10 0 18.4-7.3 19.8-16.7.1-.9.2-1.8.2-2.8 0-1.3-.1-2.6-.4-3.9z"
-                />
-                <path
-                  fill="#FF3D00"
-                  d="M6.3 14.7l6.6 4.8C14.9 16.2 19.1 13 24 13c3 0 5.7 1.1 7.7 3l5.7-5.7C34.6 6 29.6 4 24 4 16.4 4 9.8 8.3 6.3 14.7z"
-                />
-                <path
-                  fill="#4CAF50"
-                  d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.1C29 35.8 26.7 37 24 37c-5.3 0-9.7-3.6-11.3-8.4l-6.6 5.1C9.8 39.8 16.4 44 24 44z"
-                />
-                <path
-                  fill="#1976D2"
-                  d="M43.6 20.5H42V20H24v8h11.3C34.7 32 30.7 36 24 36c-6.6 0-12-5.4-12-12 0-1 .1-2 .3-3l-6.6-5.1C4.6 19.5 4 21.7 4 24c0 11.1 8.9 20 20 20 10 0 18.4-7.3 19.8-16.7.1-.9.2-1.8.2-2.8 0-1.3-.1-2.6-.4-3.9z"
-                />
-              </svg>
-            </button>
-            <button
-              aria-label="Continue with Facebook"
-              onClick={() => signIn("facebook", { callbackUrl: "/account" })}
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="#1877F2">
-                <path d="M22 12C22 6.48 17.52 2 12 2S2 6.48 2 12c0 5 3.66 9.13 8.44 9.88v-6.99H7.9v-2.9h2.54V9.84c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.23.2 2.23.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.87h2.78l-.44 2.9h-2.34v6.99C18.34 21.13 22 17 22 12"></path>
-              </svg>
-            </button>
-            <button
-              aria-label="Continue with Apple"
-              onClick={() => signIn("apple", { callbackUrl: "/account" })}
-            >
-              <svg
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-              >
-                <path d="M16.365 1.43c0 1.14-.433 2.199-1.142 2.997-.762.86-1.992 1.526-3.232 1.438-.09-1.1.476-2.26 1.186-3.043.8-.9 2.158-1.566 3.188-1.64zM20.4 17.3c-.59 1.35-.87 1.95-1.632 3.14-1.06 1.64-2.553 3.68-4.41 3.72-1.65.04-2.08-1.06-4.33-1.06-2.25 0-2.73 1.02-4.38 1.08-1.86.08-3.28-1.78-4.34-3.42C-.03 17.65-.95 12.23 1.74 8.64c1.19-1.69 2.98-2.77 4.73-2.8 1.85-.04 3.6 1.22 4.33 1.22.72 0 2.99-1.5 5.04-1.28.86.04 3.29.35 4.85 2.66-4.08 2.25-3.43 8.02-.35 8.86z" />
-              </svg>
-            </button>
+            {providers &&
+              Object.values(providers).map((provider: any) =>
+                provider.id !== "credentials" ? (
+                  <button
+                    key={provider.name}
+                    aria-label={`Continue with ${provider.name}`}
+                    onClick={() =>
+                      signIn(provider.id, { callbackUrl: "/account" })
+                    }
+                  >
+                    Sign in with {provider.name}
+                  </button>
+                ) : null
+              )}
           </Socials>
         </Body>
       </Panel>
