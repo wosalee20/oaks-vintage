@@ -412,8 +412,12 @@ export default function AuthDialog({
 
           <Socials>
             {providers &&
-              Object.values(providers).map((provider: any) =>
-                provider.id !== "credentials" ? (
+              Object.values(providers)
+                .filter(
+                  (provider: any) =>
+                    provider.id !== "credentials" && provider.id !== "github"
+                )
+                .map((provider: any) => (
                   <button
                     key={provider.name}
                     aria-label={`Continue with ${provider.name}`}
@@ -423,8 +427,7 @@ export default function AuthDialog({
                   >
                     Sign in with {provider.name}
                   </button>
-                ) : null
-              )}
+                ))}
           </Socials>
         </Body>
       </Panel>
