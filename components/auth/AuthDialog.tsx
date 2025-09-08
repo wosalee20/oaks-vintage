@@ -4,11 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { useRouter } from "next/navigation";
 import { signIn, getProviders } from "next-auth/react";
-const [providers, setProviders] = useState<any>(null);
-
-useEffect(() => {
-  getProviders().then(setProviders);
-}, []);
 
 const Overlay = styled.div<{ open: boolean }>`
   position: fixed;
@@ -228,7 +223,11 @@ export default function AuthDialog({
 }: {
   open: boolean;
   onClose: () => void;
-}) {
+}): React.ReactElement | null {
+  const [providers, setProviders] = useState<any>(null);
+  useEffect(() => {
+    getProviders().then(setProviders);
+  }, []);
   const router = useRouter();
   const panelRef = useRef<HTMLDivElement>(null);
   const [step, setStep] = useState<Step>("input");
